@@ -7,6 +7,7 @@ package Principal;
 
 import Otros.Alumno;
 import Otros.Conexion;
+import Otros.Credencial;
 import com.panamahitek.ArduinoException;
 import com.panamahitek.PanamaHitek_Arduino;
 
@@ -23,35 +24,28 @@ import jssc.SerialPortException;
  */
 public class Interfaz extends javax.swing.JFrame {
 
-    PanamaHitek_Arduino in = new PanamaHitek_Arduino();   
-    String lectura="";
+    PanamaHitek_Arduino in = new PanamaHitek_Arduino();
+    String lectura = "";
     Conexion con = Conexion.saberEstado();
-    
-    
-    
+    Alumno a1;
+    Credencial c1;
+    String valor;
+
     SerialPortEventListener escucha = new SerialPortEventListener() {
         @Override
         public void serialEvent(SerialPortEvent spe) {
             try {
-                if (in.isMessageAvailable())
-                {                      
-                    
-                    lectura = in.printMessage();
-                    
-                    Alumno a1 = new Alumno();
-                    a1. setRfid(lectura);
-                    Alumno a2 = a1.buscarAlumno(con);
-                    if (a2!=null)
-                    {                   
-                        in.sendData(a2.getNombre());                        
-                    }
-                    else
-                    {
+                if (in.isMessageAvailable()) {
+
+                    lectura = in.printMessage();                    
+
+                    if (buscarRfid(lectura)) {
                         in.sendData("INTENTE OTRA VEZ2");
+                    } else {
+
+                        in.sendData(entregarNombre(valor));
                     }
-                   
-                    
-                   
+
                 }
             } catch (SerialPortException ex) {
                 Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,21 +53,49 @@ public class Interfaz extends javax.swing.JFrame {
                 Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    };    
-  
-    
-    public Interfaz() {       
-        initComponents();
+    };
+
+    private String entregarNombre(String x) {
+        a1 = new Alumno();
+        a1.setRut(x);
+        Alumno a2 = a1.buscarAlumno(con);
+        if (a2 != null) {
+            return a2.getNombre();
+        } else {
+            return "INTENTE OTRN VEZ2";
+        }
+
+    }
+
+    private boolean buscarRfid(String x) {
+        c1 = new Credencial();
+        c1.setRfid(x);        
+        Credencial c2 = c1.buscarRfid(con);
+        
+        
+        if (c2 == null) {
+            return true;
+        }
+        else
+        {
+           valor = c2.getRut();
+           return false;
+           
+        }
+
+        
+    }
+
+    public Interfaz() {        
+       
         try {
             in.arduinoRXTX("COM4", 9600, escucha);
         } catch (ArduinoException ex) {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        
+
     }
-    
-   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -84,41 +106,22 @@ public class Interfaz extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnImprimir = new javax.swing.JButton();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
-
-        btnImprimir.setText("Imprimir");
-        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnImprimirActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addComponent(btnImprimir)
-                .addContainerGap(49, Short.MAX_VALUE))
+            .addGap(0, 169, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addComponent(btnImprimir)
-                .addContainerGap(51, Short.MAX_VALUE))
+            .addGap(0, 122, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
-        
-    }//GEN-LAST:event_btnImprimirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -156,6 +159,5 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnImprimir;
     // End of variables declaration//GEN-END:variables
 }

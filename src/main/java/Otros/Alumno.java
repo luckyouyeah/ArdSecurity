@@ -60,7 +60,7 @@ public class Alumno {
     }
     
     public Alumno buscarAlumno(Conexion con){
-        String sql ="Select * from alumno where rfid ='"+this.rfid+"'";
+        String sql ="Select * from alumno where Rut ='"+this.rut+"'";
         Alumno a1 = null;
         
         try {
@@ -69,7 +69,7 @@ public class Alumno {
             if(res.next())
             {
                 a1 = new Alumno();
-                String nom = res.getString("nombre");
+                String nom = res.getString("Nombre");
                 a1.setNombre(nom);
             }            
             

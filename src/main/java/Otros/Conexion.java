@@ -20,7 +20,7 @@ public class Conexion {
     public static Conexion conexion;
     private Connection con;
     
-    private String host = "jdbc:mysql://localhost:3306/pruebas?zeroDateTimeBehavior=convertToNull";
+    private String host = "jdbc:mysql://localhost:3306/alumnos?zeroDateTimeBehavior=convertToNull";
     private String user = "root";
     private String pass = "";
     
